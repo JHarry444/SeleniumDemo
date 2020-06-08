@@ -11,6 +11,10 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.PageFactory;
+
+import com.qa.test.pages.BingLandingPage;
+import com.qa.test.pages.BingSearchPage;
 
 public class SeleniumTest {
 
@@ -35,6 +39,20 @@ public class SeleniumTest {
 //		WebElement searchBar2 = driver.findElement(By.xpath("/html/body/header/form/div/input[1]"));
 		WebElement searchBar2 = driver.findElement(By.xpath("//*[@id=\"sb_form_q\"]"));
 		assertEquals("turtles", searchBar2.getAttribute("value"));
+	}
+
+	@Test
+	public void testPOM() {
+		driver.get("https://www.bing.co.uk");
+
+		final String searchTerm = "turtles";
+
+		BingLandingPage landing = PageFactory.initElements(driver, BingLandingPage.class);
+		landing.search(searchTerm);
+
+		BingSearchPage searchPage = PageFactory.initElements(driver, BingSearchPage.class);
+
+		assertEquals(searchTerm, searchPage.getSearchTerm());
 	}
 
 	@Test
