@@ -16,8 +16,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 
 import com.aventstack.extentreports.ExtentReports;
@@ -29,7 +30,7 @@ import com.qa.test.pages.BingSearchPage;
 
 public class SeleniumTest {
 
-	private ChromeDriver driver;
+	private RemoteWebDriver driver;
 
 	private static ExtentReports report;
 
@@ -48,7 +49,7 @@ public class SeleniumTest {
 	public void init() {
 		ChromeOptions opts = new ChromeOptions();
 		opts.setHeadless(true);
-		driver = new ChromeDriver(opts);
+		driver = new EdgeDriver();
 		driver.manage().window().maximize();
 	}
 
