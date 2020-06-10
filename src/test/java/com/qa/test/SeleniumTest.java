@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -11,7 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -20,12 +23,13 @@ import org.openqa.selenium.support.PageFactory;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import com.google.common.io.Files;
 import com.qa.test.pages.BingLandingPage;
 import com.qa.test.pages.BingSearchPage;
 
 public class SeleniumTest {
 
-	private WebDriver driver;
+	private ChromeDriver driver;
 
 	private static ExtentReports report;
 
@@ -49,18 +53,34 @@ public class SeleniumTest {
 	}
 
 	@Test
-	public void test() throws InterruptedException {
+	public void test() throws InterruptedException, IOException {
 		driver.get("https://www.bing.co.uk");
 		WebElement searchBar = driver.findElement(By.id("sb_form_q"));
+		this.test = report.createTest("test");
+		final String searchTerm = "turtles";
+
 //		WebElement searchBar = driver.findElement(By.xpath("/html/body/div[2]/div/div[3]/div[2]/form/input[1]"));  using xpath instead of the id
-		searchBar.sendKeys("turtles");
+		searchBar.sendKeys(searchTerm);
 		System.out.println(searchBar.getAttribute("innerText"));
 		searchBar.sendKeys(Keys.ENTER);
 //		WebElement searchButton = driver.findElement(By.xpath("/html/body/div[3]/div/div[3]/div[2]/form/label/svg"));
 //		searchButton.click();
 //		WebElement searchBar2 = driver.findElement(By.xpath("/html/body/header/form/div/input[1]"));
 		WebElement searchBar2 = driver.findElement(By.xpath("//*[@id=\"sb_form_q\"]"));
-		assertEquals("turtles", searchBar2.getAttribute("value"));
+		assertEquals(searchTerm, searchBar2.getAttribute("value"));
+
+		File srcFile = driver.getScreenshotAs(OutputType.FILE);
+
+		final String scrShotPath = "test-output/screenshots/test.png";
+		File targetFile = new File(scrShotPath);
+		Files.copy(srcFile, targetFile);
+
+		if (searchTerm.equals(searchBar2.getAttribute("value"))) {
+			test.pass("Correct search term found").addScreenCaptureFromPath(scrShotPath);
+		} else {
+			test.fail("Incorrect search term found").addScreenCaptureFromPath(scrShotPath);
+			fail();
+		}
 	}
 
 	@Test
